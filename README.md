@@ -23,9 +23,36 @@ mvn clean install
 ```
 
 ## Running the Application
+To start the Spring Boot service:
 ```bash
-mvn exec:java -Dexec.mainClass="com.example.App"
+mvn spring-boot:run
 ```
+
+The application will start on port 8080. You can access the API at http://localhost:8080/api/fibonacci
+
+To stop the application, press `Ctrl+C` in the terminal.
+
+## API Documentation
+The API documentation is available through Swagger UI:
+```bash
+# Start the application first
+mvn spring-boot:run
+
+# Then open in your browser
+http://localhost:8080/swagger-ui.html
+```
+
+You can also access the raw OpenAPI specification at:
+```
+http://localhost:8080/openapi.yaml
+```
+
+## Fibonacci API Endpoints
+The following endpoints are available:
+
+- `GET /api/fibonacci/{index}` - Get the Fibonacci number at the specified index
+- `GET /api/fibonacci/next/{index}` - Get the next Fibonacci number after the specified index
+- `GET /api/fibonacci/sequence?start={start}&count={count}` - Get a sequence of Fibonacci numbers starting from the specified index
 
 ## Running Tests
 ```bash
