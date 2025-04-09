@@ -4,6 +4,9 @@ package com.example;
  * Hello world application
  */
 public class App {
+    // Singleton instance of FibonacciCalculator for reuse
+    private static final FibonacciCalculator fibonacciCalculator = new FibonacciCalculator();
+    
     public static void main(String[] args) {
         System.out.println("Hello World!");
     }
@@ -20,38 +23,60 @@ public class App {
      * Returns the next number in the Fibonacci sequence after the given index
      * @param index the position in the Fibonacci sequence (0-based)
      * @return the next Fibonacci number after the given index
+     * @throws IllegalArgumentException if index is negative
+     * @throws ArithmeticException if the result is too large for int
      */
     public int getNextFibonacci(int index) {
-        if (index < 0) {
-            throw new IllegalArgumentException("Index cannot be negative");
+        long result = fibonacciCalculator.getNextFibonacci(index);
+        
+        // Check if the result fits in an int
+        if (result > Integer.MAX_VALUE) {
+            throw new ArithmeticException("Fibonacci number too large for int type");
         }
         
-        // Calculate Fibonacci number at the given index
-        int current = calculateFibonacci(index);
-        
-        // Return the next Fibonacci number
-        return calculateFibonacci(index + 1);
+        return (int) result;
+    }
+    
+    /**
+     * Returns the next number in the Fibonacci sequence after the given index as a long
+     * This method can handle larger Fibonacci numbers than getNextFibonacci
+     * 
+     * @param index the position in the Fibonacci sequence (0-based)
+     * @return the next Fibonacci number after the given index
+     * @throws IllegalArgumentException if index is negative
+     */
+    public long getNextFibonacciLong(int index) {
+        return fibonacciCalculator.getNextFibonacci(index);
     }
     
     /**
      * Calculates the Fibonacci number at the given index
+     * 
      * @param n the position in the Fibonacci sequence (0-based)
      * @return the Fibonacci number at the given position
+     * @throws IllegalArgumentException if index is negative
+     * @throws ArithmeticException if the result is too large for int
      */
-    private int calculateFibonacci(int n) {
-        if (n <= 1) {
-            return n;
+    public int calculateFibonacci(int n) {
+        long result = fibonacciCalculator.calculateFibonacci(n);
+        
+        // Check if the result fits in an int
+        if (result > Integer.MAX_VALUE) {
+            throw new ArithmeticException("Fibonacci number too large for int type");
         }
         
-        int prev = 0;
-        int current = 1;
-        
-        for (int i = 2; i <= n; i++) {
-            int next = prev + current;
-            prev = current;
-            current = next;
-        }
-        
-        return current;
+        return (int) result;
+    }
+    
+    /**
+     * Calculates the Fibonacci number at the given index as a long
+     * This method can handle larger Fibonacci numbers than calculateFibonacci
+     * 
+     * @param n the position in the Fibonacci sequence (0-based)
+     * @return the Fibonacci number at the given position
+     * @throws IllegalArgumentException if index is negative
+     */
+    public long calculateFibonacciLong(int n) {
+        return fibonacciCalculator.calculateFibonacci(n);
     }
 }
