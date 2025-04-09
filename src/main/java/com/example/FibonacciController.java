@@ -85,8 +85,8 @@ public class FibonacciController {
      */
     @GetMapping("/sequence")
     public ResponseEntity<FibonacciSequenceResponse> getFibonacciSequence(
-            @RequestParam(defaultValue = "0") int start,
-            @RequestParam(defaultValue = "10") int count) {
+            @RequestParam(name = "start", defaultValue = "0") int start,
+            @RequestParam(name = "count", defaultValue = "10") int count) {
         
         if (start < 0) {
             return ResponseEntity.badRequest().body(

@@ -80,4 +80,16 @@ public class FibonacciControllerIntegrationTest {
             .andExpect(jsonPath("$.count", is(10)))
             .andExpect(jsonPath("$.sequence", hasSize(10)));
     }
+    
+    @Test
+    public void shouldHandleExplicitParameterNames() throws Exception {
+        // This test specifically verifies the fix for the issue with parameter names
+        mockMvc.perform(get("/api/fibonacci/sequence?start=5&count=5"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.start", is(5)))
+            .andExpect(jsonPath("$.count", is(5)))
+            .andExpect(jsonPath("$.sequence", hasSize(5)))
+            .andExpect(jsonPath("$.sequence", contains(5, 8, 13, 21, 34)));
+    }
 }
