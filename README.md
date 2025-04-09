@@ -7,10 +7,12 @@ This is a Java 21 project set up with Maven, JUnit 5, and AssertJ for Test-Drive
 ## Prerequisites
 - Java 21 JDK
 - Maven
+- Docker (optional, for containerization)
 
 ## Project Structure
 ```
 cline-tdd/
+├── docker/                         # Docker configuration
 ├── src/
 │   ├── main/java/com/example/      # Application source code
 │   └── test/java/com/example/      # Test source code
@@ -63,3 +65,17 @@ mvn test
 1. Write a failing test
 2. Implement the minimum code to make the test pass
 3. Refactor the code while keeping the tests passing
+
+## Docker Support
+The application can be containerized using Docker. The Docker configuration is optimized for Kubernetes deployments.
+
+### Building and Running with Docker
+```bash
+# Build the Docker image
+docker build -t fibonacci-service:latest -f docker/Dockerfile .
+
+# Run the container
+docker run -p 8080:8080 fibonacci-service:latest
+```
+
+For more details on Docker configuration, environment variables, and Kubernetes deployment, see the [Docker README](docker/README.md).
