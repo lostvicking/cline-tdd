@@ -1,26 +1,29 @@
 package com.example;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Unit test for Fibonacci sequence functionality
+ * Unit test for Fibonacci sequence functionality using Spring Boot
  */
+@SpringBootTest
+@ActiveProfiles("test")
 public class FibonacciTest {
     
+    @Autowired
     private App app;
-    private FibonacciCalculator calculator;
     
-    @BeforeEach
-    public void setup() {
-        app = new App();
-        calculator = new FibonacciCalculator();
-    }
+    @Autowired
+    private FibonacciCalculator calculator;
     
     @Test
     public void shouldReturnOneForIndexZero() {
@@ -55,10 +58,16 @@ public class FibonacciTest {
     }
     
     @Test
-    public void shouldThrowExceptionForNegativeIndex() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> app.getNextFibonacci(-1))
-            .withMessageContaining("negative");
+    public void shouldHandleNegativeIndex() {
+        try {
+            app.getNextFibonacci(-1);
+            // If we get here, the test should fail
+            fail("Expected an exception for negative index");
+        } catch (Exception e) {
+            // With Spring validation, we might get different exceptions
+            // depending on the context, so we just check that some exception is thrown
+            assertThat(e.getMessage()).contains("greater than or equal to 0");
+        }
     }
     
     @Test
@@ -122,7 +131,7 @@ public class FibonacciTest {
     
     @Test
     public void shouldUseMemoizationEffectively() {
-        // This test verifies that memoization works by calling the method multiple times
+        // This test verifies that Spring's caching works by calling the method multiple times
         // and checking that it's still fast for repeated calls with the same index
         
         // First call might be slower as it calculates and caches values
@@ -141,7 +150,7 @@ public class FibonacciTest {
         // This assertion might be flaky in some environments, but generally
         // the second call should be significantly faster due to caching
         assertThat(secondCallDuration)
-            .as("Second call should be faster due to memoization")
+            .as("Second call should be faster due to Spring caching")
             .isLessThan(firstCallDuration);
     }
 }

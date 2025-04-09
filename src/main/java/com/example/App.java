@@ -1,14 +1,29 @@
 package com.example;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 /**
- * Hello world application
+ * Legacy App class maintained for backward compatibility
+ * Now uses the Spring-managed FibonacciCalculator service
  */
+@Component
 public class App {
-    // Singleton instance of FibonacciCalculator for reuse
-    private static final FibonacciCalculator fibonacciCalculator = new FibonacciCalculator();
     
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+    private final FibonacciCalculator fibonacciCalculator;
+    
+    @Autowired
+    public App(FibonacciCalculator fibonacciCalculator) {
+        this.fibonacciCalculator = fibonacciCalculator;
+    }
+    
+    /**
+     * Default constructor for backward compatibility
+     * Note: This will not have the Spring-managed FibonacciCalculator
+     * and should only be used in non-Spring contexts
+     */
+    public App() {
+        this.fibonacciCalculator = new FibonacciCalculator();
     }
     
     /**

@@ -1,38 +1,33 @@
 package com.example;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import jakarta.validation.constraints.Min;
+import org.springframework.validation.annotation.Validated;
 
 /**
- * Utility class for calculating Fibonacci numbers
+ * Service for calculating Fibonacci numbers
  */
+@Service
+@Validated
 public class FibonacciCalculator {
-    // Cache for memoization
-    private final Map<Integer, Long> cache = new HashMap<>();
-    
-    /**
-     * Constructor initializes the cache with base cases
-     */
-    public FibonacciCalculator() {
-        // Initialize with base cases
-        cache.put(0, 0L);
-        cache.put(1, 1L);
-    }
     
     /**
      * Returns the Fibonacci number at the given index
+     * Uses Spring's caching mechanism for memoization
+     * 
      * @param n the position in the Fibonacci sequence (0-based)
      * @return the Fibonacci number at the given position
      * @throws IllegalArgumentException if index is negative
      */
-    public long calculateFibonacci(int n) {
+    @Cacheable("fibonacci")
+    public long calculateFibonacci(@Min(0) int n) {
         if (n < 0) {
             throw new IllegalArgumentException("Index cannot be negative");
         }
         
-        // Check if result is in cache
-        if (cache.containsKey(n)) {
-            return cache.get(n);
+        if (n <= 1) {
+            return n;
         }
         
         // For larger indices, use iterative approach to avoid stack overflow
@@ -40,7 +35,8 @@ public class FibonacciCalculator {
             return calculateFibonacciIterative(n);
         }
         
-        // Calculate recursively with memoization
+        // Calculate recursively
+        // Since we're using Spring's caching, we don't need our own cache map
         long result = calculateFibonacci(n - 1) + calculateFibonacci(n - 2);
         
         // Check for overflow
@@ -48,8 +44,6 @@ public class FibonacciCalculator {
             throw new ArithmeticException("Fibonacci number too large for long type");
         }
         
-        // Cache the result
-        cache.put(n, result);
         return result;
     }
     
@@ -58,22 +52,14 @@ public class FibonacciCalculator {
      * Used for larger indices to avoid stack overflow
      */
     private long calculateFibonacciIterative(int n) {
-        // Start from the highest cached value
-        int start = 0;
+        if (n <= 1) {
+            return n;
+        }
+        
         long prev = 0;
         long current = 1;
         
-        // Find the highest cached value to start from
-        for (int i = 2; i <= Math.min(n, 50); i++) {
-            if (cache.containsKey(i)) {
-                start = i;
-                current = cache.get(i);
-                prev = cache.get(i - 1);
-            }
-        }
-        
-        // Calculate remaining values iteratively
-        for (int i = start + 1; i <= n; i++) {
+        for (int i = 2; i <= n; i++) {
             long next = prev + current;
             
             // Check for overflow
@@ -83,11 +69,6 @@ public class FibonacciCalculator {
             
             prev = current;
             current = next;
-            
-            // Cache intermediate results up to a reasonable limit
-            if (i <= 1000) {
-                cache.put(i, current);
-            }
         }
         
         return current;
@@ -95,11 +76,13 @@ public class FibonacciCalculator {
     
     /**
      * Returns the next number in the Fibonacci sequence after the given index
+     * 
      * @param index the position in the Fibonacci sequence (0-based)
      * @return the next Fibonacci number after the given index
      * @throws IllegalArgumentException if index is negative
      */
-    public long getNextFibonacci(int index) {
+    @Cacheable("nextFibonacci")
+    public long getNextFibonacci(@Min(0) int index) {
         if (index < 0) {
             throw new IllegalArgumentException("Index cannot be negative");
         }
