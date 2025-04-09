@@ -13,7 +13,7 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>cline-tdd</artifactId>
+    <artifactId>fibonacci-service</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Fibonacci Spring Boot Application</name>
     <description>A Spring Boot application that calculates Fibonacci numbers</description>
