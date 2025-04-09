@@ -1,0 +1,159 @@
+openapi: 3.0.3
+info:
+  title: Fibonacci API
+  description: API for calculating Fibonacci numbers
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+paths:
+  /api/fibonacci/{index}:
+    get:
+      summary: Get the Fibonacci number at the specified index
+      description: Returns the Fibonacci number at the given position in the sequence (0-based indexing)
+      operationId: getFibonacciNumber
+      tags:
+        - fibonacci
+      parameters:
+        - name: index
+          in: path
+          description: The position in the Fibonacci sequence (0-based)
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FibonacciResponse'
+        '400':
+          description: Invalid index supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FibonacciResponse'
+  /api/fibonacci/next/{index}:
+    get:
+      summary: Get the next Fibonacci number after the specified index
+      description: Returns the next Fibonacci number after the given index in the sequence
+      operationId: getNextFibonacciNumber
+      tags:
+        - fibonacci
+      parameters:
+        - name: index
+          in: path
+          description: The position in the Fibonacci sequence (0-based)
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FibonacciResponse'
+        '400':
+          description: Invalid index supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FibonacciResponse'
+  /api/fibonacci/sequence:
+    get:
+      summary: Get a sequence of Fibonacci numbers
+      description: Returns a sequence of Fibonacci numbers starting from the specified index
+      operationId: getFibonacciSequence
+      tags:
+        - fibonacci
+      parameters:
+        - name: start
+          in: query
+          description: The starting position in the Fibonacci sequence (0-based)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            default: 0
+        - name: count
+          in: query
+          description: The number of Fibonacci numbers to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FibonacciSequenceResponse'
+        '400':
+          description: Invalid parameters supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FibonacciSequenceResponse'
+components:
+  schemas:
+    FibonacciResponse:
+      type: object
+      properties:
+        index:
+          type: integer
+          format: int32
+          description: The position in the Fibonacci sequence
+          example: 10
+        value:
+          type: integer
+          format: int64
+          description: The Fibonacci number at the given index
+          example: 55
+        message:
+          type: string
+          description: Additional information or error message
+          example: "F(10)"
+      required:
+        - index
+        - value
+        - message
+    FibonacciSequenceResponse:
+      type: object
+      properties:
+        start:
+          type: integer
+          format: int32
+          description: The starting position in the Fibonacci sequence
+          example: 0
+        count:
+          type: integer
+          format: int32
+          description: The number of Fibonacci numbers in the sequence
+          example: 10
+        sequence:
+          type: array
+          description: The sequence of Fibonacci numbers
+          items:
+            type: integer
+            format: int64
+          example: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+        error:
+          type: string
+          nullable: true
+          description: Error message if the request failed
+          example: null
+      required:
+        - start
+        - count
+        - sequence
